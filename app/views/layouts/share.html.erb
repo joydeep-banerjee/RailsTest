@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Map</title>
+    </head>
+    <body> 
+        <div id="user_nav">
+          <% if user_signed_in? %>
+            Signed in as <%= current_user.email %>. Not you?
+            <%= link_to "Sign out", :controller =>"devise/sessions", :action=>"destroy" %> &nbsp; &nbsp; &nbsp;<%= link_to "Back", :controller => "home", :action =>"index" %></br>
+          <% else %>
+            <%= link_to "Sign up", new_user_registration_path %> or <%= link_to "sign in", new_user_session_path %>
+          <% end %>
+        </div> 
+        
+        <span id="lat" data-id="<%= @lat %>"></span>
+        <span id="longi" data-id="<%= @longi %>"></span>
+        <span id="place" data-id="<%= @place %>"></span>
+
+        <%= yield %>
+
+    </body>
+</html>

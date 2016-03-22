@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Map</title>
+    </head>
+    <body> 
+        <span class="lat" data-id="<%= @latpub %>"><%# @latpub %></span>
+        <span class="longi" data-id="<%= @longipub %>"><%# @longipub[0] %></span>
+        <span class="place" data-id="<%= @placepub %>"><%# @placepub[0] %></span>
+
+        <%= yield %>
+
+    </body>
+</html>

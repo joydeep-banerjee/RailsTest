@@ -1,0 +1,54 @@
+<% if user_signed_in? %>
+<h3>Share Location list</h3>
+
+<%= link_to "Add Friend", :controller => "home", :action => "makefriend" %>
+</br>
+<%= link_to "Share Location", :controller => "home", :action => "sharelocation" %>
+
+</br>
+</br>
+<table cellspacing="20">
+    <tr>
+        <th>Shared By</th>
+        <th>Shared To</th>
+        <th>Location</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Map</th>
+    </tr>
+    <% @shareToloc.each do |type| %>
+    <tr>
+        <td><%= type['sharebyemail'] %></td>
+        <td><%= type['sharetoemail'] %></td>
+        <td><%= type['location'] %></td>
+        <td><%= type['latitude'] %></td>
+        <td><%= type['langitude'] %></td>
+        <td>
+                <%= link_to "View Map", :controller => "home", :action => "shareto_loc", :userid => type['shared_to_id'], :locid => type['locid'] %>
+        </td>
+    </tr>
+    <% end %>
+    <% @publicloc.each do |type| %>
+    <tr>
+        <td><%= type['sharebyemail'] %></td>
+        <td><b>Public</b></td>
+        <td><%= type['location'] %></td>
+        <td><%= type['latitude'] %></td>
+        <td><%= type['langitude'] %></td>
+        <td>
+                <%= link_to "View Map", :controller => "home", :action => "public_loc", :usernm => type['sharebyemail'] %>
+        </td>
+    </tr>
+    <% end %>
+    <% @shareByloc.each do |type1| %>
+    <tr>
+        <td><%= type1['sharebyemail'] %></td>
+        <td><%= type1['sharetoemail'] %></td>
+        <td><%= type1['location'] %></td>
+        <td><%= type1['latitude'] %></td>
+        <td><%= type1['langitude'] %></td>
+        <td><%= link_to "View Map", :controller => "home", :action => "shareby_loc", :userid => type1['shared_by_id'], :locid => type1['locid'] %></td>
+    </tr>
+    <% end %>
+</table>
+<% end %>

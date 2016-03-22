@@ -1,0 +1,79 @@
+  <div id="mapdiv"></div>
+  <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script> 
+ <script>
+  $(document).ready(function(){
+  
+   var lat = $(".lat").data("id");
+   var longi = $(".longi").data("id");
+   var place = $(".place").data("id");
+    
+    var markerimg ="https://cdn2.iconfinder.com/data/icons/social-media-8/512/pointer.png";
+    
+    var tot_lat=0;
+    var tot_longi=0;
+    for(var j=0; j< lat.length; j++){
+        tot_lat=parseFloat(tot_lat)+parseFloat(lat[j]);
+        tot_longi=parseFloat(tot_longi)+parseFloat(longi[j]);
+    }
+    var centroid_lat= (tot_lat / parseFloat(lat.length));
+    var centroid_longi= (tot_longi / parseFloat(longi.length));
+   
+    map = new OpenLayers.Map("mapdiv");
+    map.addLayer(new OpenLayers.Layer.OSM());
+    
+    epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
+    projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
+   
+    var lonLat = new OpenLayers.LonLat(centroid_longi,centroid_lat).transform(epsg4326, projectTo);
+          
+    
+    var zoom=5.7;
+    map.setCenter (lonLat, zoom);
+
+    var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+    
+    // Define markers as "features" of the vector layer:
+    
+    for(var i=0;i< lat.length;i++){
+    
+    var feature = new OpenLayers.Feature.Vector(
+            new OpenLayers.Geometry.Point(longi[i],lat[i]).transform(epsg4326, projectTo),
+            {description: place[i] +"</br>"+"Latitude: "+ lat[i] +" Longitude: "+ longi[i] } ,
+            {externalGraphic: markerimg, graphicHeight: 55, graphicWidth: 51, graphicXOffset:-26, graphicYOffset:-19  }
+        );    
+    vectorLayer.addFeatures(feature);
+   
+   }
+   
+    map.addLayer(vectorLayer);
+ 
+    
+    //Add a selector control to the vectorLayer with popup functions
+    var controls = {
+      selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+    };
+
+    function createPopup(feature) {
+      feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+          feature.geometry.getBounds().getCenterLonLat(),
+          null,
+          '<div class="markerContent">'+feature.attributes.description+'</div>',
+          null,
+          true,
+          function() { controls['selector'].unselectAll(); }
+      );
+      //feature.popup.closeOnMove = true;
+      map.addPopup(feature.popup);
+    }
+
+    function destroyPopup(feature) {
+      feature.popup.destroy();
+      feature.popup = null;
+    }
+    
+    map.addControl(controls['selector']);
+    controls['selector'].activate();
+    
+   });
+</script>   

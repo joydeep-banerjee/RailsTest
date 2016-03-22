@@ -1,0 +1,66 @@
+ <div id="mapdiv"></div>
+  <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script>
+  $(document).ready(function(){
+  
+   var lat = $("#lat").data("id");
+   var longi = $("#longi").data("id");
+   var place = $("#place").data("id");
+  // alert(place);
+   var markerimg ="https://cdn2.iconfinder.com/data/icons/social-media-8/512/pointer.png";
+
+   
+    map = new OpenLayers.Map("mapdiv");
+    map.addLayer(new OpenLayers.Layer.OSM());
+    
+    epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
+    projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
+   
+    var lonLat = new OpenLayers.LonLat(longi,lat).transform(epsg4326, projectTo);
+          
+    
+    var zoom=14;
+    map.setCenter (lonLat, zoom);
+
+    var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+    
+    // Define markers as "features" of the vector layer:
+    var feature = new OpenLayers.Feature.Vector(
+            new OpenLayers.Geometry.Point(longi,lat).transform(epsg4326, projectTo),
+            {description: place+"</br>"+"Latitude: "+lat+" Longitude: "+longi } ,
+            {externalGraphic: markerimg, graphicHeight: 55, graphicWidth: 51, graphicXOffset:-26, graphicYOffset:-19  }
+        );    
+    vectorLayer.addFeatures(feature);
+   
+    map.addLayer(vectorLayer);
+ 
+    
+    //Add a selector control to the vectorLayer with popup functions
+    var controls = {
+      selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+    };
+
+    function createPopup(feature) {
+      feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+          feature.geometry.getBounds().getCenterLonLat(),
+          null,
+          '<div class="markerContent">'+feature.attributes.description+'</div>',
+          null,
+          true,
+          function() { controls['selector'].unselectAll(); }
+      );
+      //feature.popup.closeOnMove = true;
+      map.addPopup(feature.popup);
+    }
+
+    function destroyPopup(feature) {
+      feature.popup.destroy();
+      feature.popup = null;
+    }
+    
+    map.addControl(controls['selector']);
+    controls['selector'].activate();
+     
+});     
+  </script>

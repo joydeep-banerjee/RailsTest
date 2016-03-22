@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testproject1</title>
+  <%= stylesheet_link_tag    'default', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'default', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div id="user_nav">
+  <% if user_signed_in? %>
+    Signed in as <%= current_user.email %>. Not you?
+    <%# link_to "Sign out", 'users/sign_out', :method => :delete %>
+    <%= link_to "Sign out", :controller =>"devise/sessions", :action=>"destroy" %>
+  <% else %>
+    <%= link_to "Sign up", new_user_registration_path %> or <%= link_to "sign in", new_user_session_path %>
+  <% end %>
+</div>
+
+ <p class="notice"><%= notice %></p>
+ <p class="alert"><%= alert %></p>
+
+<%= yield %>
+
+</body>
+</html>

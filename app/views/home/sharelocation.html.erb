@@ -1,0 +1,45 @@
+<%= link_to "Back", :controller => "home", :action =>"index" %></br>
+<div>
+<span><h4>Add Share Location</h4></span>
+</div>
+<form action="<%= url_for(action: 'addshare', controller: 'home') %>" method="POST">
+<div>
+<table>
+    <tr>
+        <td>Location:</td>
+        <td><input type="text" name="location"></td>
+    </tr>
+    <tr>
+        <td>Latitude:</td>
+        <td><input type="text" name="latitude"></td>
+    </tr>
+    <tr>
+        <td>Longitude:</td>
+        <td><input type="text" name="longitude"></td>
+    </tr>
+    <tr>
+        <td>Shared To:</td>
+        <td>
+        <select name="shareto[]" multiple>
+            <option value="public" >Public</option>
+            <% @userfriend.each do |type| 
+                    if current_user.email == type['email']
+            %>
+            <option value="<%= type['userid'] %>" ><%= type['usermail'] %></option>
+            <% 
+                    elsif current_user.email == type['usermail'] 
+             %>
+            <option value="<%= type['id'] %>" ><%= type['email'] %></option>
+            <%       end
+                end %>
+       
+       </select>
+        </td>
+    </tr>
+    <tr>
+        <td><input type="hidden" name="userid" value="<%= current_user.id %>" ></td>
+        <td><input type="submit" name="Share" value="Share"></td>
+    </tr>
+    </table>
+</div>
+</form>

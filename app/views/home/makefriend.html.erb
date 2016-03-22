@@ -1,0 +1,52 @@
+
+<%= link_to "Back", :controller => "home", :action =>"index" %>
+
+<h3>Add Friend</h3>
+
+<form action="<%= url_for(action: 'addfriend', controller: 'home') %>" method="POST">
+    <div>
+        <table>
+            <tr>
+                <td>User :</td>
+                <td>
+                <select name="friend[]" multiple>
+                    <% @user.each do |type|  
+                         if current_user.email != type['email']
+                    %>
+                    <option value="<%= type['id'] %>" ><%= type['email'] %></option>
+                    <%   end    
+                        end %>
+               
+               </select>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="hidden" name="userid" value="<%= current_user.id %>" ></td>
+                <td><input type="submit" name="add" value="Add Friend"></td>
+            </tr>
+        </table>
+    </div>
+</form>
+<hr style="width:50%;float:left;">
+</br></br>
+<h3>My Friend</h3>
+
+<table cellspacing="2" border="1">
+    <tr>
+        <th>Friend Email</th>
+    </tr>
+    <% @userfriend.each do |type| 
+                    if current_user.email == type['email']
+            %>
+            <tr>
+                    <td><%= type['usermail'] %></td>
+            </tr>
+            <% 
+                    elsif current_user.email == type['usermail'] 
+             %>
+             <tr>
+                    <td><%= type['email'] %></td>
+             </tr>       
+            <%       end %>
+    <% end %>
+</table>    
